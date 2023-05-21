@@ -23,6 +23,8 @@ import javax.swing.table.DefaultTableModel;
 public class StudentInfoFrame extends javax.swing.JFrame {
     
     private DatabaseConnection dbConnection;
+        private String id;
+
 
     /**
      * Creates new form Test
@@ -30,51 +32,51 @@ public class StudentInfoFrame extends javax.swing.JFrame {
     public StudentInfoFrame() {
         initComponents();
         retrieveAndDisplayData();
-
     }
-private void displayDataOnTable() {
-    // Create the column names for the table
-    String[] columnNames = {"Date Occurred", "Misconduct", "Reported By"};
+    
+    private void displayDataOnTable() {
+        // Create the column names for the table
+        String[] columnNames = {"Date Occurred", "Misconduct", "Reported By"};
 
-    // Create a DefaultTableModel with the column names
-    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        // Create a DefaultTableModel with the column names
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
-    try {
-        // Get the database connection from your DatabaseConnection class
-        Connection connection = DatabaseConnection.getConnection();
+        try {
+            // Get the database connection from your DatabaseConnection class
+            Connection connection = DatabaseConnection.getConnection();
 
-        // Create a PreparedStatement to execute the SQL query
-        String query = "SELECT date_occurred, misconduct, reported_by FROM student";
-        PreparedStatement pstmt = connection.prepareStatement(query);
+            // Create a PreparedStatement to execute the SQL query
+            String query = "SELECT date_occurred, misconduct, reported_by FROM student";
+            PreparedStatement pstmt = connection.prepareStatement(query);
 
-        // Execute the query and get the ResultSet
-        ResultSet rs = pstmt.executeQuery();
+            // Execute the query and get the ResultSet
+            ResultSet rs = pstmt.executeQuery();
 
-        // Iterate through the ResultSet and add rows to the model
-        while (rs.next()) {
-            String dateOccurred = rs.getString("date_occurred");
-            String misconduct = rs.getString("misconduct");
-            String reportedBy = rs.getString("reported_by");
+            // Iterate through the ResultSet and add rows to the model
+            while (rs.next()) {
+                String dateOccurred = rs.getString("date_occurred");
+                String misconduct = rs.getString("misconduct");
+                String reportedBy = rs.getString("reported_by");
 
-            // Create an array of data for each row
-            Object[] rowData = {dateOccurred, misconduct, reportedBy};
+                // Create an array of data for each row
+                Object[] rowData = {dateOccurred, misconduct, reportedBy};
 
-            // Add the row to the model
-            model.addRow(rowData);
+                // Add the row to the model
+                model.addRow(rowData);
+            }
+
+            // Set the model for the JTable
+            table.setModel(model);
+
+            // Close the ResultSet and PreparedStatement
+            rs.close();
+            pstmt.close();
+
+        } catch (SQLException ex) {
+            // Handle any SQL errors
+            ex.printStackTrace();
         }
-
-        // Set the model for the JTable
-        table.setModel(model);
-
-        // Close the ResultSet and PreparedStatement
-        rs.close();
-        pstmt.close();
-
-    } catch (SQLException ex) {
-        // Handle any SQL errors
-        ex.printStackTrace();
     }
-}
 
 
 
