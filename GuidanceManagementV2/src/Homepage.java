@@ -74,6 +74,7 @@ public class Homepage extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         logoutbtn = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -136,11 +137,22 @@ public class Homepage extends javax.swing.JFrame {
 
         jTextField1.setText("jTextField1");
 
+        jButton5.setText("Add Student (WIP)");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(101, 101, 101)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -149,6 +161,8 @@ public class Homepage extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1155, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
                         .addComponent(viewStudentInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(40, 40, 40)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -156,11 +170,7 @@ public class Homepage extends javax.swing.JFrame {
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(40, 40, 40)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(265, 265, 265))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(101, 101, 101)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(196, 196, 196))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,13 +181,14 @@ public class Homepage extends javax.swing.JFrame {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(59, 59, 59)
+                .addGap(60, 60, 60)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(viewStudentInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(168, Short.MAX_VALUE))
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(167, Short.MAX_VALUE))
         );
 
         pack();
@@ -197,15 +208,18 @@ public class Homepage extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutbtnActionPerformed
 
     private void viewStudentInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewStudentInfoActionPerformed
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    // Get the ID value from the selected row
-                    int id = (int) table.getValueAt(selectedRow, 0);
+    // Get the selected row index
+    int selectedRow = table.getSelectedRow();
+    if (selectedRow != 1) {  //will need fix. doesn't work properly pa
+        // Get the name from the selected row
+        String name = (String) table.getValueAt(selectedRow, 0);
 
-                    // Create an instance of the StudentInfoFrame
-                    StudentInfoFrame infoFrame = new StudentInfoFrame(id); //error here
-                    infoFrame.setVisible(true);
-                }
+        // Create an instance of StudentInfoFrame and pass the name
+        StudentInfoFrame studentInfoFrame = new StudentInfoFrame(name);
+        
+        // Display the StudentInfoFrame
+        studentInfoFrame.setVisible(true);
+    }
     }//GEN-LAST:event_viewStudentInfoActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -215,6 +229,10 @@ public class Homepage extends javax.swing.JFrame {
     private void studentDataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studentDataTableMouseClicked
         
     }//GEN-LAST:event_studentDataTableMouseClicked
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -256,6 +274,7 @@ public class Homepage extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JButton logoutbtn;

@@ -9,152 +9,164 @@
  */
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import javax.swing.ImageIcon;
 import java.awt.Image;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 
 
 public class StudentInfoFrame extends javax.swing.JFrame {
     
-    private DatabaseConnection dbConnection;
-        private String id;
+    private String name;
+    private DatabaseHandler dbHandler;
 
 
-    /**
-     * Creates new form Test
-     */
-    public StudentInfoFrame() {
+
+    public StudentInfoFrame(String name) {
         initComponents();
-        retrieveAndDisplayData();
-    }
-    
-    private void displayDataOnTable() {
-        // Create the column names for the table
-        String[] columnNames = {"Date Occurred", "Misconduct", "Reported By"};
-
-        // Create a DefaultTableModel with the column names
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-
+        retrieveAndDisplayData(name);
+        this.name = name;
         try {
-            // Get the database connection from your DatabaseConnection class
-            Connection connection = DatabaseConnection.getConnection();
-
-            // Create a PreparedStatement to execute the SQL query
-            String query = "SELECT date_occurred, misconduct, reported_by FROM student";
-            PreparedStatement pstmt = connection.prepareStatement(query);
-
-            // Execute the query and get the ResultSet
-            ResultSet rs = pstmt.executeQuery();
-
-            // Iterate through the ResultSet and add rows to the model
-            while (rs.next()) {
-                String dateOccurred = rs.getString("date_occurred");
-                String misconduct = rs.getString("misconduct");
-                String reportedBy = rs.getString("reported_by");
-
-                // Create an array of data for each row
-                Object[] rowData = {dateOccurred, misconduct, reportedBy};
-
-                // Add the row to the model
-                model.addRow(rowData);
-            }
-
-            // Set the model for the JTable
-            table.setModel(model);
-
-            // Close the ResultSet and PreparedStatement
-            rs.close();
-            pstmt.close();
-
+        dbHandler.connect("jdbc:mysql://localhost:3306/guidance_management_system", "root", "");
         } catch (SQLException ex) {
-            // Handle any SQL errors
-            ex.printStackTrace();
+            // Handle exceptions
         }
     }
+    
+     public String getName() {
+        return name;
+    }
+    
+    
+//private void displayDataOnTable() {
+//    // Create the column names for the table
+//    String[] columnNames = {"Date Occurred", "Misconduct", "Reported By"};
+//
+//    // Create a DefaultTableModel with the column names
+//    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+//
+//    try {
+//        // Create a PreparedStatement to execute the SQL query
+//        String query = "SELECT date_occurred, misconduct, reported_by FROM student WHERE Name=?";
+//        PreparedStatement pstmt = dbHandler.getConnection().prepareStatement(query);
+//        pstmt.setString(1, name);
+//
+//        // Execute the query and get the ResultSet
+//        ResultSet rs = pstmt.executeQuery();
+//
+//        // Iterate through the ResultSet and add rows to the model
+//        while (rs.next()) {
+//            String dateOccurred = rs.getString("date_occurred");
+//            String misconduct = rs.getString("misconduct");
+//            String reportedBy = rs.getString("reported_by");
+//
+//            // Create an array of data for each row
+//            Object[] rowData = {dateOccurred, misconduct, reportedBy};
+//
+//            // Add the row to the model
+//            model.addRow(rowData);
+//        }
+//
+//        // Set the model for the JTable
+//        table.setModel(model);
+//
+//        // Close the ResultSet and PreparedStatement
+//        rs.close();
+//        pstmt.close();
+//
+//    } catch (SQLException ex) {
+//        // Handle any SQL errors
+//        ex.printStackTrace();
+//    }
+//}
 
 
 
     
-    private void retrieveAndDisplayData() {
-        try {
-            // Establish a database connection
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guidance_management_system", "root", "");
-            Statement stmt = conn.createStatement();
+public void retrieveAndDisplayData(String name) {
+    try {
+        // Establish a database connection
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/guidance_management_system", "root", "");
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM student WHERE name = ?");
+        stmt.setString(1, name);
+        ResultSet rs = stmt.executeQuery();
 
-            // Execute the SQL query to retrieve the data
-            String sql = "SELECT name, grade, section, strand, lrn, address, email, dob, gender, contact_number, emergency_name, emergency_contact_number, emergency_address, emergency_email, relationship_to_student, date_occurred, misconduct, reported_by FROM student";
-            ResultSet rs = stmt.executeQuery(sql);
+        // Process the retrieved data and update the JTextFields
+        if (rs.next()) {
+            // Retrieve the data from the result set
+            int grade = rs.getInt("grade");
+            String section = rs.getString("section");
+            String strand = rs.getString("strand");
+            String lrn = rs.getString("lrn");
+            String address = rs.getString("address");
+            String email = rs.getString("email");
+            String dob = rs.getString("dob");
+            String gender = rs.getString("gender");
+            String contactNumber = rs.getString("contact_number");
+            String emergencyName = rs.getString("emergency_name");
+            String emergencyContactNumber = rs.getString("emergency_contact_number");
+            String emergencyAddress = rs.getString("emergency_address");
+            String emergencyEmail = rs.getString("emergency_email");
+            String relationshipToStudent = rs.getString("relationship_to_student");
 
-            // Process the retrieved data and update the JTextFields
-            if (rs.next()) {
-                String name = rs.getString("name");
-                int grade = rs.getInt("grade");
-                String section = rs.getString("section");
-                String strand = rs.getString("strand");
-                String lrn = rs.getString("lrn");
-                String address = rs.getString("address");
-                String email = rs.getString("email");
-                String dob = rs.getString("dob");
-                String gender = rs.getString("gender");
-                String contactNumber = rs.getString("contact_number");
-                String emergencyName = rs.getString("emergency_name");
-                String emergencyContactNumber = rs.getString("emergency_contact_number");
-                String emergencyAddress = rs.getString("emergency_address");
-                String emergencyEmail = rs.getString("emergency_email");
-                String relationshipToStudent = rs.getString("relationship_to_student");
-
-                // Update the JTextFields with the retrieved data
-                nameTextField.setText(name);
-                gradeTextField.setText(String.valueOf(grade));
-                sectionTextField.setText(section);
-                strandTextField.setText(strand);
-                lrnTextField.setText(lrn);
-                addressTextField.setText(address);
-                emailTextField.setText(email);
-                dobTextField.setText(dob);
-                genderTextField.setText(gender);
-                contactNumberTextField.setText(contactNumber);
-                emergencyNameTextField.setText(emergencyName);
-                emergencyContactNumberTextField.setText(emergencyContactNumber);
-                emergencyAddressTextField.setText(emergencyAddress);
-                emergencyEmailTextField.setText(emergencyEmail);
-                relationshipToStudentTextField.setText(relationshipToStudent);
-            }
-            
-//            Blob imageBlob = rs.getBlob("image");
-//        if (imageBlob != null) {
-//            // Convert the Blob to bytes
-//            byte[] imageData = imageBlob.getBytes(1, (int) imageBlob.length());
-//
-//            // Create an ImageIcon from the byte array
-//            ImageIcon imageIcon = new ImageIcon(imageData);
-//
-//            // Scale the ImageIcon to fit the label
-//            Image image = imageIcon.getImage();
-//            Image scaledImage = image.getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
-//
-//            // Update the existing JLabel with the scaled image
-//            imageLabel.setIcon(new ImageIcon(scaledImage));
-//        } else {
-//            // No image data found, clear the label
-//            imageLabel.setIcon(null);
-//        }
-
-            // Close the result set, statement, and connection
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Handle the exception appropriately
+            // Update the JTextFields with the retrieved data
+            nameTextField.setText(name);
+            gradeTextField.setText(String.valueOf(grade));
+            sectionTextField.setText(section);
+            strandTextField.setText(strand);
+            lrnTextField.setText(lrn);
+            addressTextField.setText(address);
+            emailTextField.setText(email);
+            dobTextField.setText(dob);
+            genderTextField.setText(gender);
+            contactNumberTextField.setText(contactNumber);
+            emergencyNameTextField.setText(emergencyName);
+            emergencyContactNumberTextField.setText(emergencyContactNumber);
+            emergencyAddressTextField.setText(emergencyAddress);
+            emergencyEmailTextField.setText(emergencyEmail);
+            relationshipToStudentTextField.setText(relationshipToStudent);
         }
+            
+        Blob imageBlob = rs.getBlob("image");
+      if (imageBlob != null) {
+          // Convert the Blob to bytes
+          byte[] imageData = imageBlob.getBytes(1, (int) imageBlob.length());
+
+          // Create an ImageIcon from the byte array
+          ImageIcon imageIcon = new ImageIcon(imageData);
+
+          // Scale the ImageIcon to fit the label
+          Image image = imageIcon.getImage();
+          Image scaledImage = image.getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+
+          // Update the existing JLabel with the scaled image
+          imageLabel.setIcon(new ImageIcon(scaledImage));
+      } else {
+          // No image data found, set the default blank picture
+        String defaultImagePath = "/Asset/Blank.png";
+        ImageIcon defaultImageIcon = new ImageIcon(getClass().getResource(defaultImagePath));
+        Image defaultImage = defaultImageIcon.getImage();
+        Image scaledDefaultImage = defaultImage.getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+        imageLabel.setIcon(new ImageIcon(scaledDefaultImage));
+      }
+
+        
+        // Close the result set, statement, and connection
+        rs.close();
+        stmt.close();
+        conn.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Handle the exception appropriately
     }
+}
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -202,6 +214,7 @@ public class StudentInfoFrame extends javax.swing.JFrame {
         relationshipToStudentTextField = new javax.swing.JTextField();
         strandlbl1 = new javax.swing.JLabel();
         lrnTextField = new javax.swing.JTextField();
+        backbutton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -231,12 +244,21 @@ public class StudentInfoFrame extends javax.swing.JFrame {
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
+                {null, null, null},
                 {null, null, null}
             },
             new String [] {
-                "Date Occured", "Misconduct", "Reported by"
+                "Date Occured", "Misconduct", "Reported By"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(table);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -276,6 +298,13 @@ public class StudentInfoFrame extends javax.swing.JFrame {
 
         strandlbl1.setText("LRN:");
 
+        backbutton.setText("Back");
+        backbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backbuttonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -294,49 +323,51 @@ public class StudentInfoFrame extends javax.swing.JFrame {
                                     .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel8))
                                 .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(gradelbl)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(gradeTextField))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(namelbl)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
-                                    .addComponent(jLabel7)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel9)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(emergencyNameTextField))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel11)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(emergencyAddressTextField))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel10)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(emergencyContactNumberTextField))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel12)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(emergencyEmailTextField))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel13)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(relationshipToStudentTextField))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(sectionlbl)
-                                            .addComponent(strandlbl)
-                                            .addComponent(strandlbl1))
-                                        .addGap(4, 4, 4)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lrnTextField)
-                                            .addComponent(strandTextField)
-                                            .addComponent(sectionTextField)))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(gradelbl)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(gradeTextField))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(namelbl)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE))
+                                        .addComponent(jLabel7)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(6, 6, 6)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel9)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(emergencyNameTextField))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel11)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(emergencyAddressTextField))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel10)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(emergencyContactNumberTextField))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel12)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(emergencyEmailTextField))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel13)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(relationshipToStudentTextField))))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(sectionlbl)
+                                                .addComponent(strandlbl)
+                                                .addComponent(strandlbl1))
+                                            .addGap(4, 4, 4)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(lrnTextField)
+                                                .addComponent(strandTextField)
+                                                .addComponent(sectionTextField))))
+                                    .addComponent(backbutton)))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(jLabel3)
@@ -372,7 +403,9 @@ public class StudentInfoFrame extends javax.swing.JFrame {
                         .addGap(40, 40, 40)
                         .addComponent(imageLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
+                        .addGap(30, 30, 30)
+                        .addComponent(backbutton)
+                        .addGap(51, 51, 51)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(namelbl)
                             .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -450,6 +483,18 @@ public class StudentInfoFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_relationshipToStudentTextFieldActionPerformed
 
+    private void backbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backbuttonActionPerformed
+            int choice = JOptionPane.showConfirmDialog(StudentInfoFrame.this, "Are you sure you want to go back?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            // Hide the current StudentInfoFrame
+            setVisible(false);
+            
+            // Show the Homepage frame again
+            Homepage homepageFrame = new Homepage();
+            homepageFrame.setVisible(true);
+        }
+    }//GEN-LAST:event_backbuttonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -481,13 +526,14 @@ public class StudentInfoFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new StudentInfoFrame().setVisible(true);
+                
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField addressTextField;
+    private javax.swing.JButton backbutton;
     private javax.swing.JButton btnImage;
     private javax.swing.JTextField contactNumberTextField;
     private javax.swing.JTextField dobTextField;
